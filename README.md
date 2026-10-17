@@ -30,6 +30,25 @@ Needs Node 22.12 or newer.
 - Fill the `TODO(Deen)` notes in `src/content/projects/*.md` (they are HTML comments, so they don't show on the site).
 - Add screenshots or clips for each project.
 
-## Deploy
+## Deploy (AWS)
 
-Import the repo in [Vercel](https://vercel.com/new). It detects Astro, so no settings are needed.
+The site is hosted at [eusuf.dev](https://eusuf.dev) on S3 and CloudFront. Every push to `main` builds the site and uploads it with [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). GitHub signs in to AWS with a short-lived token, so there are no AWS keys stored anywhere. The AWS side is one CloudFormation stack, [`infra/site.yml`](infra/site.yml).
+
+One-time setup, done once in your AWS account:
+
+1. **Move DNS to Route 53.** In Route 53, create a public hosted zone for `eusuf.dev`. Copy its four nameservers into your domain registrar's nameserver settings. If the domain already has records you use (email, for example), recreate them in the new zone first.
+2. **Create the stack in us-east-1.** In CloudFormation (region **N. Virginia, us-east-1**), create a stack from `infra/site.yml`. Set `HostedZoneId` to the zone from step 1. If your account already has a GitHub identity provider (IAM → Identity providers → `token.actions.githubusercontent.com`), set `CreateGitHubOidcProvider` to `false`. Tick the IAM acknowledgement. The certificate and CloudFront usually take 5 to 15 minutes; the certificate step waits until the nameserver change from step 1 is live.
+3. **Tell GitHub where to deploy.** In this repo, open Settings → Secrets and variables → Actions → **Variables** and add three repository variables from the stack's **Outputs** tab: `AWS_ROLE_ARN`, `S3_BUCKET` and `CLOUDFRONT_DISTRIBUTION_ID`.
+4. **Deploy.** Actions → Deploy → Run workflow. After that, every merge to `main` goes live on its own.
+
+Same thing from the CLI, if you prefer:
+
+```sh
+aws route53 create-hosted-zone --name eusuf.dev --caller-reference "$(date +%s)"
+aws cloudformation deploy --region us-east-1 --stack-name personal-site \
+  --template-file infra/site.yml --capabilities CAPABILITY_IAM \
+  --parameter-overrides HostedZoneId=<zone id>
+aws cloudformation describe-stacks --region us-east-1 --stack-name personal-site --query "Stacks[0].Outputs"
+```
+
+Cost is small: the Route 53 zone is $0.50 a month, and S3 and CloudFront traffic for a personal site is usually within the free tier.
