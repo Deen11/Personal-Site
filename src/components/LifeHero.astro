@@ -1,0 +1,249 @@
+---
+import Nav from './Nav.astro';
+---
+
+<section class="hero" data-life-hero>
+  <canvas aria-hidden="true"></canvas>
+  <div class="wrap content">
+    <Nav />
+    <div class="copy">
+      <div class="eyebrow tag rise">Software engineer · Singapore · Graduating 2027</div>
+      <h1 class="rise d1">I ship AI<br />that holds up<br /><span class="accent">in production.</span></h1>
+      <p class="lede tag rise d2">
+        Full-stack and AI engineer at GovTech. Before that, I led a nine-person team building a 3D engine in C++.
+      </p>
+    </div>
+    <div class="meta mono">
+      <span class="tag hint"
+        ><span class="fine">Click a cell to toggle · drag to draw · runs when you stop</span><span class="coarse"
+          >Tap a cell to toggle</span
+        ></span
+      >
+      <span class="tag status" aria-hidden="true" data-status>RUNNING · GEN 0 · POP 0</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    height: clamp(600px, 100svh, 760px);
+    overflow: hidden;
+    cursor: crosshair;
+    touch-action: pan-y;
+    user-select: none;
+  }
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .content {
+    position: relative;
+    height: 100%;
+    padding-top: 32px;
+    padding-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  .copy {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    align-items: flex-start;
+  }
+  h1 {
+    font-size: clamp(54px, 8.75vw, 112px);
+    line-height: 0.93;
+    letter-spacing: -0.045em;
+    text-shadow:
+      0 0 24px var(--bg),
+      0 0 48px var(--bg);
+  }
+  .lede {
+    font-size: clamp(17px, 1.6vw, 19px);
+    color: var(--text-2);
+    max-width: 520px;
+  }
+  /* Opaque chips keep small text readable when cells pass underneath */
+  .tag {
+    background: var(--bg);
+    padding: 4px 8px;
+    margin-left: -8px;
+  }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .status {
+    color: var(--accent);
+    margin: 0 -8px 0 0;
+    white-space: nowrap;
+  }
+  .coarse {
+    display: none;
+  }
+  @media (hover: none) {
+    .fine {
+      display: none;
+    }
+    .coarse {
+      display: inline;
+    }
+  }
+  @media (max-width: 640px) {
+    .meta {
+      flex-direction: column;
+      gap: 6px;
+    }
+    .status {
+      margin: 0 0 0 -8px;
+      align-self: flex-start;
+    }
+  }
+</style>
+
+<script>
+  import { Life, seeded, reducedMotion, fitCanvas } from '../scripts/life';
+
+  const CELL = 12;
+  const STEP_EVERY = 9; // frames between generations
+  const PLACE_PAUSE = 1200; // ms the sim holds while you place cells
+
+  for (const hero of document.querySelectorAll<HTMLElement>('[data-life-hero]')) {
+    const canvas = hero.querySelector('canvas')!;
+    const status = hero.querySelector<HTMLElement>('[data-status]')!;
+    const rnd = seeded(11);
+    const reduce = reducedMotion();
+
+    let ctx: CanvasRenderingContext2D;
+    let width = 0;
+    let height = 0;
+    let life: Life | null = null;
+
+    const fit = () => {
+      ({ ctx, width, height } = fitCanvas(canvas));
+      const w = Math.ceil(width / CELL);
+      const h = Math.ceil(height / CELL);
+      if (!life) {
+        life = new Life(w, h);
+        // Two gliders off to the right so the headline stays clear
+        life.glider(Math.floor(w * 0.76), Math.floor(h * 0.28), rnd);
+        life.glider(Math.floor(w * 0.86), Math.floor(h * 0.72), rnd);
+      } else {
+        life.resize(w, h);
+      }
+      draw();
+    };
+
+    let hover: { x: number; y: number } | null = null;
+    let painting = false;
+    let lastCell = [-1, -1];
+    let pauseUntil = 0;
+    let frame = 0;
+    let visible = true;
+    let raf = 0;
+
+    const cellAt = (e: PointerEvent) => {
+      const r = canvas.getBoundingClientRect();
+      return [Math.floor((e.clientX - r.left) / CELL), Math.floor((e.clientY - r.top) / CELL)];
+    };
+
+    const updateStatus = () => {
+      if (!life) return;
+      const mode = reduce ? 'PAUSED' : performance.now() < pauseUntil ? 'PLACING' : 'RUNNING';
+      status.textContent = `${mode} · GEN ${life.gen.toLocaleString('en-US')} · POP ${life.pop.toLocaleString('en-US')}`;
+    };
+
+    function draw() {
+      if (!life || !ctx) return;
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = 'rgba(255,255,255,0.025)';
+      for (let x = 0; x <= width; x += CELL) ctx.fillRect(x, 0, 1, height);
+      for (let y = 0; y <= height; y += CELL) ctx.fillRect(0, y, width, 1);
+      const { grid, age, w } = life;
+      for (let i = 0; i < grid.length; i++) {
+        const a = grid[i] ? 0.6 : age[i] * 0.12;
+        if (a <= 0) continue;
+        ctx.fillStyle = `rgba(212,245,60,${a})`;
+        ctx.fillRect((i % w) * CELL + 1, Math.floor(i / w) * CELL + 1, CELL - 2, CELL - 2);
+      }
+      if (hover) {
+        ctx.strokeStyle = 'rgba(212,245,60,0.6)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(hover.x * CELL + 0.5, hover.y * CELL + 0.5, CELL - 1, CELL - 1);
+      }
+    }
+
+    const tick = () => {
+      raf = 0;
+      if (!life || !visible) return;
+      frame++;
+      const placing = performance.now() < pauseUntil;
+      if (!placing && frame % STEP_EVERY === 0) {
+        life.step();
+        // Keep the board from going permanently empty
+        if (life.pop < 5 && life.gen % 40 === 0) {
+          life.glider(Math.floor(life.w * (0.7 + rnd() * 0.22)), Math.floor(life.h * (0.15 + rnd() * 0.7)), rnd);
+        }
+      }
+      if (frame % STEP_EVERY === 0) updateStatus();
+      life.fade(0.07);
+      draw();
+      raf = requestAnimationFrame(tick);
+    };
+
+    const start = () => {
+      if (!reduce && !raf) raf = requestAnimationFrame(tick);
+    };
+
+    hero.addEventListener('pointerdown', (e) => {
+      if (!life || (e.target as Element).closest('a')) return;
+      const [x, y] = cellAt(e);
+      life.toggle(x, y);
+      lastCell = [x, y];
+      pauseUntil = performance.now() + PLACE_PAUSE;
+      // On touch, dragging scrolls the page instead of drawing
+      painting = e.pointerType === 'mouse';
+      if (painting) e.preventDefault();
+      updateStatus();
+      draw();
+    });
+
+    hero.addEventListener('pointermove', (e) => {
+      if (!life || e.pointerType !== 'mouse') return;
+      const [x, y] = cellAt(e);
+      hover = { x, y };
+      if (painting && (x !== lastCell[0] || y !== lastCell[1])) {
+        life.set(x, y);
+        lastCell = [x, y];
+        pauseUntil = performance.now() + PLACE_PAUSE;
+      }
+      if (reduce) draw();
+    });
+
+    hero.addEventListener('pointerleave', () => {
+      hover = null;
+      painting = false;
+      if (reduce) draw();
+    });
+    window.addEventListener('pointerup', () => (painting = false));
+
+    new ResizeObserver(fit).observe(hero);
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) start();
+    }).observe(hero);
+
+    fit();
+    updateStatus();
+    start();
+  }
+</script>

@@ -1,0 +1,29 @@
+{
+  "name": "personal-site",
+  "description": "Deen Al Eusuf's personal site.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Deen11/personal-site.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Deen11/personal-site/issues"
+  },
+  "homepage": "https://github.com/Deen11/personal-site#readme",
+  "dependencies": {
+    "@astrojs/mdx": "^8.1.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/space-grotesk": "^5.3.0",
+    "astro": "^7.4.0"
+  },
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

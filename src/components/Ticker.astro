@@ -1,0 +1,33 @@
+---
+const items = ['Python', 'TypeScript', 'C++', 'LangGraph', 'FastAPI', 'React', 'AWS Bedrock', 'Docker', 'ECS', 'Lua'];
+const line = items.join(' ✦ ') + ' ✦';
+---
+
+<div class="ticker" role="img" aria-label={items.join(', ')}>
+  <div class="track" aria-hidden="true"><span>{line}</span><span>{line}</span></div>
+</div>
+
+<style>
+  .ticker {
+    overflow: hidden;
+    padding: 18px 0;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 22px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .track {
+    display: flex;
+    width: max-content;
+    animation: slide 32s linear infinite;
+  }
+  .track span {
+    padding-right: 48px;
+  }
+  @keyframes slide {
+    to {
+      translate: -50% 0;
+    }
+  }
+</style>
