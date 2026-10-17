@@ -1,0 +1,165 @@
+@import '@fontsource/space-grotesk/400.css';
+@import '@fontsource/space-grotesk/500.css';
+@import '@fontsource/space-grotesk/700.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+
+:root {
+  --bg: #0c0d10;
+  --surface: #13151a;
+  --surface-2: #1a1c22;
+  --line: #2a2c33;
+  --text: #f2f2ee;
+  --text-2: #c4c6cc;
+  --muted: #a3a6ae;
+  --faint: #6e727c;
+  --accent: #d4f53c;
+  --accent-hover: #e8ff7a;
+  --sans: 'Space Grotesk', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --gutter: clamp(20px, 6.25vw, 80px);
+  --max: 1280px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover {
+  color: var(--accent-hover);
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+}
+
+p {
+  margin: 0;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.mono,
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+.eyebrow {
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.accent {
+  color: var(--accent);
+}
+
+.skip {
+  position: absolute;
+  left: 12px;
+  top: -48px;
+  z-index: 10;
+  padding: 8px 12px;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.skip:focus {
+  top: 12px;
+  color: var(--bg);
+}
+
+/* Page header used on inner pages */
+.page-head {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: clamp(56px, 9vw, 96px) 0 clamp(40px, 6vw, 64px);
+}
+.page-head h1 {
+  font-size: clamp(52px, 8.2vw, 104px);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+}
+.page-head .lede {
+  font-size: clamp(17px, 1.6vw, 19px);
+  color: var(--text-2);
+  max-width: 600px;
+}
+
+/* Entrance */
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+.rise {
+  animation: rise 0.9s var(--ease) both;
+}
+.d1 {
+  animation-delay: 0.1s;
+}
+.d2 {
+  animation-delay: 0.22s;
+}
+.d3 {
+  animation-delay: 0.34s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

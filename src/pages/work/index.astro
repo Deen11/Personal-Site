@@ -1,0 +1,59 @@
+---
+import Base from '../../layouts/Base.astro';
+import LifeDivider from '../../components/LifeDivider.astro';
+import ProjectRow from '../../components/ProjectRow.astro';
+import { getProjects, pad } from '../../projects';
+
+const projects = await getProjects();
+const groups = [
+  { key: 'ai', label: 'AI and agents' },
+  { key: 'systems', label: 'Systems and engines' },
+] as const;
+---
+
+<Base title="Work" current="work" description="Projects by Deen Al Eusuf: AI products, agent tooling and C++ game engines.">
+  <div class="wrap">
+    <header class="page-head">
+      <div class="eyebrow rise">/work · {pad(projects.length)} projects</div>
+      <h1 class="rise d1">Things I've <span class="accent">shipped.</span></h1>
+      <p class="lede rise d2">AI products in government, agent tooling, and the C++ engines underneath games.</p>
+    </header>
+  </div>
+
+  {
+    groups.map((g) => (
+      <>
+        <LifeDivider />
+        <section class="wrap group" aria-label={g.label}>
+          <h2 class="eyebrow">{g.label}</h2>
+          <div>
+            {projects
+              .filter((p) => p.data.group === g.key)
+              .map((p) => (
+                <ProjectRow
+                  href={`/work/${p.id}`}
+                  number={pad(projects.indexOf(p) + 1)}
+                  title={p.data.title}
+                  summary={p.data.summary}
+                  stack={p.data.stack}
+                />
+              ))}
+          </div>
+        </section>
+      </>
+    ))
+  }
+  <LifeDivider />
+</Base>
+
+<style>
+  .group {
+    padding-top: 40px;
+    padding-bottom: 64px;
+  }
+  .group h2 {
+    font-weight: 400;
+    line-height: 1.5;
+    padding-bottom: 20px;
+  }
+</style>

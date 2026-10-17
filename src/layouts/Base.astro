@@ -1,0 +1,51 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  current?: 'work' | 'about' | 'contact';
+  // The homepage hero draws its own nav over the Game of Life board.
+  bareHeader?: boolean;
+}
+const { title, description = site.description, current, bareHeader = false } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : site.title;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0C0D10" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    {
+      !bareHeader && (
+        <header class="wrap site-header">
+          <Nav current={current} />
+        </header>
+      )
+    }
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .site-header {
+    padding-top: 32px;
+  }
+</style>

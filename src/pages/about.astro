@@ -1,0 +1,155 @@
+---
+import Base from '../layouts/Base.astro';
+import LifeDivider from '../components/LifeDivider.astro';
+
+const timeline = [
+  { when: '2026 – now', what: 'Software Engineer Intern, GovTech.', note: 'Built an AI-assisted budget review app end to end.' },
+  { when: '2024 – 2025', what: 'Technical lead, DigiPen game projects.', note: 'Led a C++ 3D engine team of nine and a C++/Lua game framework.' },
+  { when: '2023 – 2027', what: 'B.S. Computer Science, SIT and DigiPen.', note: 'Real-time interactive simulation.' },
+  { when: '2021 – 2023', what: 'Emergency Medical Technician, SCDF.', note: '' },
+  { when: '2021', what: 'QA and Test Engineering Technician, Blackmagic Design.', note: 'C test scripts and hardware/software debugging.' },
+  { when: '2020', what: 'Software Engineer Intern, PSA.', note: 'My first real system: a Java and MySQL CCTV asset inventory.' },
+  { when: '2018 – 2021', what: 'Diploma in Computer Engineering, Singapore Polytechnic.', note: '' },
+];
+const skills = ['Python', 'TypeScript', 'C++', 'Java', 'SQL', 'React', 'FastAPI', 'LangGraph', 'AWS Bedrock', 'ECS', 'Docker', 'MySQL', 'Lua'];
+---
+
+<Base title="About" current="about" description="About Deen Al Eusuf: from emergency medical technician to software engineer building AI products.">
+  <div class="wrap">
+    <header class="page-head">
+      <div class="eyebrow rise">/about</div>
+      <h1 class="rise d1">From ambulances<br />to <span class="accent">agents.</span></h1>
+      <p class="lede rise d2">
+        I spent two years as an emergency medical technician before going back to study computer science. Working calls
+        taught me to stay calm, follow protocol and communicate clearly under pressure, which turns out to be most of
+        engineering too.
+      </p>
+    </header>
+  </div>
+
+  <LifeDivider />
+
+  <div class="wrap">
+    <section class="timeline" aria-labelledby="timeline-title">
+      <h2 id="timeline-title" class="eyebrow">Timeline</h2>
+      <ol>
+        {
+          timeline.map((t) => (
+            <li>
+              <span class="when mono">{t.when}</span>
+              <span>
+                <span class="what">{t.what}</span> {t.note && <span class="note">{t.note}</span>}
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+  </div>
+
+  <LifeDivider />
+
+  <div class="wrap">
+    <section class="split">
+      <div>
+        <h2 class="eyebrow">What I work with</h2>
+        <ul class="skills">{skills.map((s) => <li>{s}</li>)}</ul>
+      </div>
+      <div class="card">
+        <h2 class="eyebrow">About the homepage</h2>
+        <p>
+          The Game of Life on my homepage started as a DigiPen assignment. I rebuilt it for the browser because I still
+          find it fun that four rules can make something that looks alive.
+        </p>
+        <a href="/" class="mono">Play with it →</a>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  h2.eyebrow {
+    font-weight: 400;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .timeline {
+    padding: 56px 0 64px;
+  }
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr);
+    gap: 24px;
+    padding: 20px 0;
+    border-top: 1px solid var(--line);
+    font-size: 18px;
+  }
+  li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .when {
+    color: var(--accent);
+    padding-top: 3px;
+  }
+  .what {
+    font-weight: 500;
+  }
+  .note {
+    color: var(--muted);
+  }
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 48px;
+    padding: 56px 0 72px;
+  }
+  .skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .skills li {
+    display: block;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .skills li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .card {
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .card h2.eyebrow {
+    margin: 0;
+  }
+  .card p {
+    color: var(--text-2);
+  }
+  @media (max-width: 900px) {
+    li {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+    .split {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

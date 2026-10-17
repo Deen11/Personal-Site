@@ -1,0 +1,69 @@
+---
+import { site } from '../site';
+
+interface Props {
+  current?: 'work' | 'about' | 'contact';
+}
+const { current } = Astro.props;
+const links = [
+  { href: '/work', label: '/work', key: 'work' },
+  { href: '/about', label: '/about', key: 'about' },
+  ...(site.resume ? [{ href: site.resume, label: '/resume', key: 'resume' }] : []),
+  { href: '/contact', label: '/contact', key: 'contact' },
+];
+---
+
+<nav class="nav" aria-label="Main">
+  <a href="/" class="brand">DEEN.AL.EUSUF</a>
+  <ul>
+    {
+      links.map((l) => (
+        <li>
+          <a href={l.href} aria-current={current === l.key ? 'page' : undefined}>
+            {l.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    pointer-events: auto;
+  }
+  .brand {
+    color: var(--text);
+    font-weight: 500;
+  }
+  ul {
+    display: flex;
+    gap: clamp(14px, 2.4vw, 28px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  ul a {
+    color: var(--muted);
+  }
+  ul a:hover,
+  ul a[aria-current='page'] {
+    color: var(--accent);
+  }
+  @media (max-width: 520px) {
+    .brand {
+      font-size: 12px;
+    }
+    ul {
+      gap: 12px;
+      font-size: 12px;
+    }
+  }
+</style>

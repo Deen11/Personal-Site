@@ -1,0 +1,231 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import LifeDivider from '../../components/LifeDivider.astro';
+import { getProjects } from '../../projects';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, next: projects[(i + 1) % projects.length] },
+  }));
+}
+
+const { project, next } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+---
+
+<Base title={data.title} current="work" description={data.intro}>
+  <div class="wrap">
+    <header class="page-head">
+      <a href="/work" class="mono back rise">← /work/{project.id}</a>
+      <h1 class="rise d1">{data.headline} <span class="accent">{data.headlineAccent}</span></h1>
+      <p class="lede rise d2">{data.intro}</p>
+    </header>
+
+    <dl class="facts rise d3">
+      {
+        data.facts.map((f) => (
+          <div>
+            <dt class="eyebrow">{f.label}</dt>
+            <dd>{f.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+
+  <LifeDivider />
+
+  <div class="wrap body">
+    {
+      data.flow.length > 0 && (
+        <section class="flow" aria-label="How it fits together">
+          <h2 class="eyebrow">How it fits together</h2>
+          <ol>
+            {data.flow.map((step) => (
+              <li>{step}</li>
+            ))}
+          </ol>
+        </section>
+      )
+    }
+
+    <article class="prose">
+      <Content />
+    </article>
+
+    {
+      data.results.length > 0 && (
+        <section class="results" aria-label="Results">
+          <h2 class="eyebrow">Results</h2>
+          <div class="grid">
+            {data.results.map((r) => (
+              <div>
+                <span class="value">{r.value}</span>
+                <span class="eyebrow">{r.label}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+
+  <LifeDivider />
+
+  <div class="wrap">
+    <a href={`/work/${next.id}`} class="next">
+      <span class="eyebrow">Next project</span>
+      <span class="name">{next.data.title} <span class="accent">→</span></span>
+    </a>
+  </div>
+</Base>
+
+<style>
+  .back {
+    color: var(--muted);
+  }
+  .back:hover {
+    color: var(--accent);
+  }
+  .page-head h1 {
+    font-size: clamp(44px, 6.6vw, 84px);
+    max-width: 1000px;
+  }
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0 0 56px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .facts div {
+    padding: 22px 20px;
+    border-left: 1px solid var(--line);
+  }
+  .facts div:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+  dt {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  dd {
+    margin: 0;
+    font-size: 17px;
+  }
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+    padding-top: 64px;
+    padding-bottom: 72px;
+  }
+  h2.eyebrow {
+    font-weight: 400;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .flow ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+  }
+  .flow li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .flow li::before {
+    counter-increment: step;
+    content: counter(step, decimal-leading-zero);
+    color: var(--accent);
+  }
+  .flow li {
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+  }
+  .prose {
+    max-width: 720px;
+  }
+  .prose :global(h2) {
+    font-size: clamp(28px, 3.4vw, 40px);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin: 48px 0 16px;
+  }
+  .prose :global(h2:first-child) {
+    margin-top: 0;
+  }
+  .prose :global(p) {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--text-2);
+    margin: 0 0 16px;
+  }
+  .prose :global(strong) {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .results .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px 64px;
+  }
+  .results .grid div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .value {
+    font-size: clamp(40px, 5vw, 56px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--accent);
+  }
+  .next {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 48px 0;
+    color: var(--text);
+  }
+  .next .name {
+    font-size: clamp(32px, 4.5vw, 56px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    transition: translate 0.35s;
+  }
+  .next:hover .name {
+    translate: 6px 0;
+  }
+  @media (max-width: 900px) {
+    .facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .facts div:nth-child(3) {
+      padding-left: 0;
+      border-left: 0;
+    }
+    .facts div:nth-child(n + 3) {
+      border-top: 1px solid var(--line);
+    }
+    .next {
+      flex-direction: column;
+    }
+  }
+</style>

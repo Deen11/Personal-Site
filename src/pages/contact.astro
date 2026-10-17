@@ -1,0 +1,131 @@
+---
+import Base from '../layouts/Base.astro';
+import LifeDivider from '../components/LifeDivider.astro';
+import { site } from '../site';
+
+const links = [
+  ...(site.resume ? [{ label: 'Resume', value: 'PDF ↓', href: site.resume }] : []),
+  { label: 'LinkedIn', value: '/in/deenaleusuf ↗', href: site.linkedin },
+  { label: 'GitHub', value: '/Deen11 ↗', href: site.github },
+];
+---
+
+<Base title="Contact" current="contact" description="Get in touch with Deen Al Eusuf about 2027 software engineering and AI roles.">
+  <div class="wrap grid">
+    <div class="main">
+      <div class="eyebrow avail rise"><span class="dot" aria-hidden="true"></span>Open to 2027 SWE and AI roles · available from May 2027</div>
+      <h1 class="rise d1">Let's build<br />something <span class="accent">useful.</span></h1>
+      <a href={`mailto:${site.email}`} class="email rise d2">
+        {site.email}
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+      </a>
+    </div>
+    <ul class="links rise d3">
+      {
+        links.map((l) => (
+          <li>
+            <a href={l.href} class="link">
+              <span>{l.label}</span>
+              <span class="mono">{l.value}</span>
+            </a>
+          </li>
+        ))
+      }
+      <li class="link static">
+        <span>Based in</span>
+        <span class="mono">Singapore · GMT+8</span>
+      </li>
+    </ul>
+  </div>
+  <LifeDivider />
+</Base>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 64px;
+    align-items: end;
+    padding-top: clamp(64px, 10vw, 120px);
+    padding-bottom: 96px;
+  }
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    align-items: flex-start;
+  }
+  .avail {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .dot {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px rgba(212, 245, 60, 0.15);
+  }
+  h1 {
+    font-size: clamp(52px, 8vw, 104px);
+    line-height: 0.92;
+    letter-spacing: -0.045em;
+  }
+  .email {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--bg);
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    word-break: break-all;
+  }
+  .email:hover {
+    background: var(--accent-hover);
+    color: var(--bg);
+  }
+  .links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .link {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 0;
+    border-top: 1px solid var(--line);
+    color: var(--text);
+    font-size: 20px;
+    transition:
+      background-color 0.3s,
+      padding 0.3s;
+  }
+  a.link:hover {
+    background: var(--surface);
+    padding-left: 16px;
+    padding-right: 16px;
+    color: var(--text);
+  }
+  .link .mono {
+    color: var(--muted);
+    font-size: 14px;
+    align-self: center;
+  }
+  .static {
+    border-bottom: 1px solid var(--line);
+  }
+  @media (max-width: 900px) {
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+  }
+</style>

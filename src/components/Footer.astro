@@ -1,0 +1,22 @@
+---
+import { site } from '../site';
+---
+
+<footer class="wrap">
+  <div class="inner mono">
+    <span>© {new Date().getFullYear()} {site.name}</span>
+    <a href={`mailto:${site.email}`}>{site.email}</a>
+  </div>
+</footer>
+
+<style>
+  .inner {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 32px 0 48px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+  }
+</style>
