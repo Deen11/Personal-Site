@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >-
   Static hosting for the personal site: a private S3 bucket behind CloudFront with an HTTPS
-  certificate, DNS records in Route 53, and a GitHub Actions role that can deploy it.
+  certificate, and a GitHub Actions role that can deploy it. DNS stays at Cloudflare.
   Deploy this stack in us-east-1 (CloudFront only accepts certificates from that region).
 
 Parameters:
@@ -9,9 +9,6 @@ Parameters:
     Type: String
     Default: eusuf.dev
     Description: Apex domain. www.<domain> redirects to it.
-  HostedZoneId:
-    Type: AWS::Route53::HostedZone::Id
-    Description: Route 53 hosted zone for the domain. Its nameservers must already be set at your registrar.
   GitHubRepo:
     Type: String
     Default: Deen11/personal-site
@@ -81,12 +78,8 @@ Resources:
       DomainName: !Ref DomainName
       SubjectAlternativeNames:
         - !Sub 'www.${DomainName}'
+      # Stack creation waits here until the two validation CNAMEs shown in ACM are added at Cloudflare
       ValidationMethod: DNS
-      DomainValidationOptions:
-        - DomainName: !Ref DomainName
-          HostedZoneId: !Ref HostedZoneId
-        - DomainName: !Sub 'www.${DomainName}'
-          HostedZoneId: !Ref HostedZoneId
 
   # Redirects www to the apex and maps clean URLs (/work) to Astro's /work/index.html files.
   UrlFunction:
@@ -166,33 +159,6 @@ Resources:
             ResponsePagePath: /404.html
             ErrorCachingMinTTL: 60
 
-  # Z2FDTNDATAQYW2 is the fixed hosted zone ID AWS uses for every CloudFront alias
-  DnsRecords:
-    Type: AWS::Route53::RecordSetGroup
-    Properties:
-      HostedZoneId: !Ref HostedZoneId
-      RecordSets:
-        - Name: !Ref DomainName
-          Type: A
-          AliasTarget:
-            DNSName: !GetAtt Distribution.DomainName
-            HostedZoneId: Z2FDTNDATAQYW2
-        - Name: !Ref DomainName
-          Type: AAAA
-          AliasTarget:
-            DNSName: !GetAtt Distribution.DomainName
-            HostedZoneId: Z2FDTNDATAQYW2
-        - Name: !Sub 'www.${DomainName}'
-          Type: A
-          AliasTarget:
-            DNSName: !GetAtt Distribution.DomainName
-            HostedZoneId: Z2FDTNDATAQYW2
-        - Name: !Sub 'www.${DomainName}'
-          Type: AAAA
-          AliasTarget:
-            DNSName: !GetAtt Distribution.DomainName
-            HostedZoneId: Z2FDTNDATAQYW2
-
   GitHubOidcProvider:
     Type: AWS::IAM::OIDCProvider
     Condition: CreateOidc
@@ -235,6 +201,9 @@ Resources:
 Outputs:
   SiteUrl:
     Value: !Sub 'https://${DomainName}'
+  CloudFrontDomain:
+    Description: Point CNAME records for the domain and www at this, in Cloudflare
+    Value: !GetAtt Distribution.DomainName
   S3Bucket:
     Description: GitHub variable S3_BUCKET
     Value: !Ref SiteBucket
