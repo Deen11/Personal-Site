@@ -27,15 +27,15 @@ To add a project, copy one of the files in `src/content/projects/`. Set `feature
 ## Resume and demo videos
 
 - Drop your resume at `public/resume.pdf`. The Resume links in the nav, hero and contact section appear on the next build once the file exists.
-- For a demo video, put the file in `public/videos/` (for example `public/videos/pailot.mp4`) and add `video: /videos/pailot.mp4` to that project's frontmatter. Keep videos under 25 MB, which is Cloudflare Pages' per-file limit, or host them on YouTube and add a `links` entry instead.
+- For a demo video, put the file in `public/videos/` (for example `public/videos/pailot.mp4`) and add `video: /videos/pailot.mp4` to that project's frontmatter. Keep videos under 25 MB, which is Cloudflare's per-file limit, or host them on YouTube and add a `links` entry instead.
 
-## Deploy (Cloudflare Pages)
+## Deploy (Cloudflare)
 
-The domain is registered at Cloudflare, so the site is hosted on Cloudflare Pages in the same account. One-time setup:
+The domain is registered at Cloudflare, so the site is hosted there too, as a Worker that serves the static build. `wrangler.jsonc` points it at `dist/`. One-time setup:
 
-1. In the Cloudflare dashboard, open **Workers & Pages → Create → Pages → Connect to Git**, and pick `Deen11/personal-site`.
-2. Set **Framework preset** to Astro, **Build command** to `npm run build`, and **Build output directory** to `dist`. The `.node-version` file tells Cloudflare to use Node 22.
-3. Save and deploy. You get a `*.pages.dev` preview URL.
-4. In the project, open **Custom domains → Set up a custom domain**, and add `eusuf.dev`, then `www.eusuf.dev`. Cloudflare creates the DNS records itself because the domain is in the same account.
+1. In the Cloudflare dashboard, open **Workers & Pages → Create → Import a repository**, and pick `Deen11/personal-site`.
+2. Name the project `personal-site` (it must match `name` in `wrangler.jsonc`). Keep **Build command** `npm run build`, **Deploy command** `npx wrangler deploy`, and **Root directory** `/`. The `.node-version` file tells Cloudflare to use Node 22.
+3. Save and deploy. You get a `*.workers.dev` URL.
+4. In the Worker, open **Settings → Domains & Routes → Add → Custom domain**, and add `eusuf.dev`, then `www.eusuf.dev`. Cloudflare creates the DNS records itself because the domain is in the same account.
 
-After that, every push to `main` goes live, and every pull request gets its own preview URL.
+After that, every push to `main` goes live.
