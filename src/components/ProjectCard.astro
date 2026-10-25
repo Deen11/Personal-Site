@@ -1,0 +1,73 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, summary, stack, date, award } = project.data;
+---
+
+<article class="card">
+  <p class="date">{date}</p>
+  <h3><a href={`/projects/${project.id}/`}>{title}</a></h3>
+  {award && <p class="award">{award}</p>}
+  <p class="summary">{summary}</p>
+  <ul class="tags">
+    {stack.map((s) => <li>{s}</li>)}
+  </ul>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: border-color 0.15s;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+  }
+
+  .card h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  /* Whole card is clickable */
+  .card h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+  }
+
+  .date {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .summary {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .award {
+    align-self: flex-start;
+    margin: 0;
+  }
+
+  .tags {
+    margin-top: auto;
+  }
+</style>

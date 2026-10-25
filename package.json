@@ -1,0 +1,26 @@
+{
+  "name": "personal-site",
+  "description": "Deen Al Eusuf's personal site.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Deen11/personal-site.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Deen11/personal-site/issues"
+  },
+  "homepage": "https://github.com/Deen11/personal-site#readme",
+  "dependencies": {
+    "astro": "^7.4.0"
+  },
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

@@ -1,0 +1,111 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const { title, summary, stack, date, role, award, links, video, note } = project.data;
+const { Content } = await render(project);
+---
+
+<Base title={title} description={summary}>
+  <article class="container project">
+    <a class="back" href="/#projects">← All projects</a>
+    <p class="eyebrow">{[date, role].filter(Boolean).join(' · ')}</p>
+    <h1>{title}</h1>
+    {award && <p class="award">{award}</p>}
+    <p class="lead">{summary}</p>
+    <ul class="tags">
+      {stack.map((s) => <li>{s}</li>)}
+    </ul>
+    {
+      links.length > 0 && (
+        <p class="links">
+          {links.map((l) => (
+            <a class="button" href={l.href}>
+              {l.label} ↗
+            </a>
+          ))}
+        </p>
+      )
+    }
+    {
+      video && (
+        <video class="video" src={video} controls preload="metadata" playsinline>
+          <track kind="captions" />
+        </video>
+      )
+    }
+    <div class="body">
+      <Content />
+    </div>
+    {note && <p class="note muted">{note}</p>}
+  </article>
+</Base>
+
+<style>
+  .project {
+    padding-top: 40px;
+    padding-bottom: 64px;
+  }
+
+  .back {
+    display: inline-block;
+    margin-bottom: 28px;
+    font-size: 0.92rem;
+    text-decoration: none;
+  }
+
+  h1 {
+    font-size: clamp(1.9rem, 6vw, 2.6rem);
+    margin: 0 0 0.75rem;
+  }
+
+  .award {
+    margin: 0 0 1rem;
+  }
+
+  .lead {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin: 0 0 1rem;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 1.25rem 0 0;
+  }
+
+  .video {
+    width: 100%;
+    margin-top: 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: #000;
+  }
+
+  .body {
+    margin-top: 2rem;
+  }
+
+  .body :global(h2) {
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .body :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .note {
+    margin-top: 2rem;
+    font-size: 0.92rem;
+    font-style: italic;
+  }
+</style>
