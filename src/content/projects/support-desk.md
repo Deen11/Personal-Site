@@ -5,9 +5,6 @@ featured: true
 summary: A help desk that automates tier-1 telecom support with LLM query classification and hands tickets to human agents.
 stack: [AWS CloudFormation, DynamoDB, CloudWatch, EC2, LLM]
 date: Mar 2026
-links:
-  - label: Live demo
-    href: https://54.179.142.4.sslip.io/desk
 ---
 
 A cloud-native help desk for tier-1 telecom support. An LLM classifies each query, answers what it can, and escalates the rest as tickets to human agents.

@@ -6,6 +6,9 @@ summary: An agent that reschedules field-service technicians after disruptions, 
 stack: [TypeScript, LangGraph, LLM tool calling]
 date: Oct 2026
 role: Agent tools and evaluations, team project
+links:
+  - label: Live demo
+    href: https://54.179.142.4.sslip.io/desk
 award: 2nd place (Public) and Best Agents Use Award, NUS-ISS Show Me Your Agents Hackathon
 ---
 
