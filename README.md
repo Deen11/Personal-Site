@@ -40,4 +40,4 @@ The domain is registered at Cloudflare, so the site is hosted there too, as a Wo
 
 After that, every push to `main` goes live.
 
-Pull requests get a preview too: Workers Builds runs `npm run build` and then `npx wrangler preview`, and posts the preview link on the PR. The `previews` block in `wrangler.jsonc` is what lets `wrangler preview` run, so keep it even though it is empty. If a preview fails with "assets.directory does not exist", the **Build command** in **Settings → Build** is empty.
+Pull requests get a preview too: Workers Builds runs `npm run build` and then `npx wrangler preview`, and posts the preview link on the PR. The `previews` block in `wrangler.jsonc` is what lets `wrangler preview` run, so keep it even though it is empty. Previews have their own build settings: in **Settings → Builds**, the **Previews Base** tab needs **Build command** `npm run build` as well. If a preview fails with "assets.directory does not exist", that box is empty.
