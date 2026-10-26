@@ -1,6 +1,6 @@
 # Personal Site
 
-Deen Al Eusuf's personal site at [eusuf.dev](https://eusuf.dev), built with [Astro](https://astro.build). It's a static site with no client-side JavaScript, light and dark themes that follow the visitor's system setting, and a page per project.
+Deen Al Eusuf's personal site at [eusuf.dev](https://eusuf.dev), built with [Astro](https://astro.build). It's a static site on a black background, with a canvas swarm that reshapes itself as you scroll, smooth scrolling from Lenis, and a page per project. With reduced motion on, the swarm holds still.
 
 ## Run it
 
