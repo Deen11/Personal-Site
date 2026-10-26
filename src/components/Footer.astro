@@ -2,38 +2,20 @@
 import { site } from '../site';
 ---
 
-<footer class="site-footer">
-  <div class="container inner">
-    <span>© {new Date().getFullYear()} {site.name}</span>
-    <span class="links">
-      <a href={`mailto:${site.email}`}>Email</a>
-      <a href={site.linkedin}>LinkedIn</a>
-      <a href={site.github}>GitHub</a>
-    </span>
-  </div>
+<footer class="container mono">
+  <span>© {new Date().getFullYear()} {site.name}</span>
+  <span>Built with Astro · Cloudflare</span>
 </footer>
 
 <style>
-  .site-footer {
-    border-top: 1px solid var(--border);
-    padding: 28px 0 40px;
-    font-size: 0.9rem;
-    color: var(--muted);
-  }
-
-  .inner {
+  footer {
+    position: relative;
+    z-index: 2;
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     gap: 12px;
-  }
-
-  .links {
-    display: flex;
-    gap: 16px;
-  }
-
-  .links a {
+    flex-wrap: wrap;
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
     color: var(--muted);
   }
 </style>

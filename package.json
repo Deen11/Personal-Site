@@ -16,7 +16,8 @@
   },
   "homepage": "https://github.com/Deen11/personal-site#readme",
   "dependencies": {
-    "astro": "^7.4.0"
+    "astro": "^7.4.0",
+    "lenis": "^1.1.13"
   },
   "type": "module",
   "private": true,
