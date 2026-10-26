@@ -2,260 +2,334 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { site, experience, skills, education, awards } from '../site';
+import { site, experience, education } from '../site';
 import { hasResume } from '../resume';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const featured = projects.filter((p) => p.data.featured);
 const more = projects.filter((p) => !p.data.featured);
+const degree = education[0];
+const tags = ['LangGraph', 'LLM tool calling', 'Agent evals', 'Amazon Bedrock', 'FastAPI', 'React', 'TypeScript', 'Python', 'C++20', 'ECS', 'Lambda', 'Terraform'];
 ---
 
-<Base>
-  <section class="hero">
+<Base hud>
+  <!-- Each section names the shape the swarm forms while it is on screen -->
+  <section class="sec hero" id="home" data-form="DEEN">
     <div class="container">
-      <p class="eyebrow">{site.location} · Open to 2027 roles</p>
-      <h1>{site.name}</h1>
-      <p class="headline">Software engineer building AI agents and the systems around them.</p>
-      <p class="pitch">
-        I build LLM applications end to end, from tool-calling agents and evaluations to secure deployment on AWS,
-        with a foundation in C++ systems. Final-year Computer Science student at SIT and DigiPen, open to software
-        engineer and AI engineer roles from 2027.
-      </p>
-      <div class="actions">
-        <a class="button primary" href="#projects">View projects</a>
-        {hasResume && <a class="button" href="/resume.pdf">Download resume</a>}
-        <a class="button" href="#contact">Get in touch</a>
+      <div class="hero-grid">
+        <div class="hero-title">
+          <p class="mono muted">{site.name} · Software engineer · {site.location}</p>
+          <h1>I build AI agents <span>and the systems around them.</span></h1>
+        </div>
+        <div class="hero-side">
+          <p class="lede">
+            Tool calling, evaluations and AWS deployments, on a foundation of <b>real-time simulation in C++</b>.
+            Final-year CS at SIT and DigiPen, open to software and AI engineer roles from 2027.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="#work">See the work</a>
+            <a class="button" href="#contact">Say hello</a>
+          </div>
+        </div>
+      </div>
+      <div class="hint mono"><span>Scroll to re-form the swarm <span class="arrow">↓</span></span><span>Move through it · click to scatter</span></div>
+    </div>
+  </section>
+
+  <section class="sec" id="about" data-form="flock">
+    <div class="container">
+      <div class="text">
+        <p class="kicker mono">About <span class="f">swarm → free flock</span></p>
+        <h2 class="display">Lots of small parts. <em>One system</em> that behaves.</h2>
+        <p class="lede">
+          Every agent on this page follows three local rules, and together they move as one flock. That's the kind of
+          problem I like. At GovTech I own an AI review platform end to end, from the React front end to the Bedrock
+          assistant and the deployment pipeline. At DigiPen I led nine programmers building a C++ 3D engine.
+        </p>
+        <ul class="tags">{tags.map((t) => <li>{t}</li>)}</ul>
       </div>
     </div>
   </section>
 
-  <section class="section" id="about">
+  <section class="sec" id="work" data-form="</>">
     <div class="container">
-      <h2>About</h2>
-      <p>
-        I'm a software engineer in Singapore, currently interning at GovTech, where I own an AI-assisted review
-        platform on AWS from the React front end to the Bedrock assistant and the deployment pipeline. I like work
-        where a model is only one part of the system, and the rest is validation, tools, evaluation, and careful
-        rollout.
-      </p>
-      <p>
-        Before software I spent two years as an Emergency Medical Technician with the Singapore Civil Defence Force,
-        which taught me to stay calm when things break. At DigiPen I led a nine-programmer team building a custom C++
-        3D engine, and outside work I build and test agents at hackathons. I graduate in 2027.
-      </p>
-    </div>
-  </section>
-
-  <section class="section" id="projects">
-    <div class="container">
-      <h2>Projects</h2>
-      <div class="grid">
-        {featured.map((project) => <ProjectCard project={project} />)}
-      </div>
-      {
-        more.length > 0 && (
-          <>
-            <h3 class="sub">Also built</h3>
-            <ul class="more">
-              {more.map((p) => (
-                <li>
+      <div class="text wide">
+        <p class="kicker mono">Selected work <span class="f">swarm → &lt;/&gt;</span></p>
+        <h2 class="display">Things I've <em>built</em></h2>
+        <div class="cards">
+          {featured.map((project) => <ProjectCard project={project} />)}
+        </div>
+        {
+          more.length > 0 && (
+            <p class="more muted">
+              Also built:{' '}
+              {more.map((p, i) => (
+                <>
+                  {i > 0 && ', '}
                   <a href={`/projects/${p.id}/`}>{p.data.title}</a>
-                  <span class="muted"> · {p.data.summary}</span>
-                </li>
+                </>
               ))}
-            </ul>
-          </>
-        )
-      }
+            </p>
+          )
+        }
+      </div>
     </div>
   </section>
 
-  <section class="section" id="experience">
+  <section class="sec" id="experience" data-form="2027">
     <div class="container">
-      <h2>Experience</h2>
-      <ol class="timeline">
-        {
-          experience.map((job) => (
-            <li>
-              <p class="dates">{job.dates}</p>
-              <h3>
-                {job.role} <span class="org">· {job.org}</span>
-              </h3>
-              <p class="muted">{job.summary}</p>
-            </li>
-          ))
-        }
-      </ol>
+      <div class="text wide">
+        <p class="kicker mono">Experience <span class="f">swarm → 2027</span></p>
+        <h2 class="display">Open to roles from <em>2027</em></h2>
+        <ol class="jobs">
+          {
+            experience.map((job) => (
+              <li class="job">
+                <span class="mono">{job.dates}</span>
+                <div>
+                  <h3>
+                    {job.role} <span>· {job.org}</span>
+                  </h3>
+                  <p>{job.summary}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+        <p class="muted degree">{degree.degree} · {degree.school} · {degree.dates}</p>
+      </div>
     </div>
   </section>
 
-  <section class="section" id="skills">
+  <section class="sec" id="contact" data-form="HI!">
     <div class="container">
-      <h2>Skills</h2>
-      <dl class="skills">
-        {
-          skills.map((s) => (
-            <div>
-              <dt>{s.area}</dt>
-              <dd>{s.items}</dd>
-            </div>
-          ))
-        }
-      </dl>
-
-      <h2 class="spaced">Education</h2>
-      <ul class="plain">
-        {
-          education.map((e) => (
-            <li>
-              <h3>{e.degree}</h3>
-              <p class="muted">
-                {e.school} · {e.dates}
-              </p>
-              {e.note && <p class="muted note">{e.note}</p>}
-            </li>
-          ))
-        }
-      </ul>
-
-      <h2 class="spaced">Awards</h2>
-      <ul>
-        {awards.map((a) => <li>{a}</li>)}
-      </ul>
-    </div>
-  </section>
-
-  <section class="section" id="contact">
-    <div class="container">
-      <h2>Contact</h2>
-      <p>I'm looking for software engineer and AI engineer roles starting in 2027. The fastest way to reach me is email.</p>
-      <div class="actions">
-        <a class="button primary" href={`mailto:${site.email}`}>{site.email}</a>
-        <a class="button" href={site.linkedin}>LinkedIn</a>
-        <a class="button" href={site.github}>GitHub</a>
-        {hasResume && <a class="button" href="/resume.pdf">Resume (PDF)</a>}
+      <div class="text">
+        <p class="kicker mono">Contact <span class="f">swarm → HI!</span></p>
+        <h2 class="display">Let's build something that <em>behaves</em>.</h2>
+        <p class="lede">I'm looking for software and AI engineer roles starting in 2027. Email is the fastest way to reach me.</p>
+        <p class="mail">{site.email}</p>
+        <div class="actions">
+          <a class="button primary" href={`mailto:${site.email}`}>Email me</a>
+          <button class="button" type="button" id="copy">Copy email</button>
+          <a class="button" href={site.linkedin}>LinkedIn</a>
+          <a class="button" href={site.github}>GitHub</a>
+          {hasResume && <a class="button" href="/resume.pdf">Resume (PDF)</a>}
+        </div>
       </div>
     </div>
   </section>
 </Base>
 
+<script>
+  import { site } from '../site';
+
+  const copy = document.getElementById('copy');
+  copy?.addEventListener('click', () => {
+    const done = (text: string) => {
+      copy.textContent = text;
+      setTimeout(() => (copy.textContent = 'Copy email'), 1800);
+    };
+    navigator.clipboard.writeText(site.email).then(
+      () => done('Copied'),
+      () => done('Select it above'),
+    );
+  });
+</script>
+
 <style>
+  .sec {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding-block: 140px;
+  }
+
+  .sec > .container {
+    flex: 1;
+  }
+
+  .text {
+    max-width: 540px;
+    display: grid;
+    gap: 24px;
+  }
+
+  .text.wide {
+    max-width: 580px;
+  }
+
+  .kicker {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+  }
+
+  .kicker .f {
+    color: var(--accent);
+    border: 1px solid rgba(255, 181, 71, 0.35);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  .lede {
+    color: var(--muted);
+    font-size: 19px;
+    max-width: 34em;
+  }
+
+  .lede b {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* Hero: the swarm spells the name, the copy sits under it */
   .hero {
-    padding: 72px 0 56px;
+    align-items: flex-end;
+    padding-bottom: 72px;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 48px;
+    align-items: end;
+  }
+
+  .hero-title,
+  .hero-side {
+    display: grid;
+    gap: 18px;
   }
 
   h1 {
-    font-size: clamp(2.2rem, 7vw, 3.2rem);
-    margin: 0 0 0.75rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-stretch: 112%;
+    font-size: clamp(32px, 3.6vw, 54px);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
   }
 
-  .headline {
-    font-size: clamp(1.2rem, 3.6vw, 1.45rem);
-    font-weight: 600;
-    margin: 0 0 1rem;
-  }
-
-  .pitch {
+  h1 span {
     color: var(--muted);
-    margin: 0 0 1.75rem;
+    font-weight: 500;
   }
 
-  .actions {
+  .hint {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    justify-content: space-between;
     gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 54px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
   }
 
-  .sub {
-    margin: 2rem 0 0.75rem;
+  .arrow {
+    display: inline-block;
+    animation: nudge 1.8s ease-in-out infinite;
+  }
+
+  @keyframes nudge {
+    50% {
+      transform: translateY(4px);
+    }
+  }
+
+  .cards {
+    display: grid;
+    gap: 12px;
   }
 
   .more {
-    padding-left: 1.2rem;
-    margin: 0;
+    font-size: 15.5px;
   }
 
-  .timeline {
+  .jobs {
     list-style: none;
     margin: 0;
-    padding: 0 0 0 20px;
-    border-left: 2px solid var(--border);
+    padding: 0;
+    display: grid;
+    border-top: 1px solid var(--border);
   }
 
-  .timeline li {
-    position: relative;
-    padding-bottom: 28px;
+  .job {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 18px;
+    padding-block: 16px;
+    border-bottom: 1px solid var(--border);
   }
 
-  .timeline li:last-child {
-    padding-bottom: 0;
-  }
-
-  .timeline li::before {
-    content: '';
-    position: absolute;
-    left: -27px;
-    top: 8px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--bg);
-    border: 2px solid var(--accent);
-  }
-
-  .timeline p {
-    margin: 0.25rem 0 0;
-  }
-
-  .dates {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
+  .job .mono {
+    padding-top: 4px;
     color: var(--muted);
+    letter-spacing: 0.02em;
   }
 
-  .org {
+  .job h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-stretch: 105%;
+    font-size: 19px;
+    line-height: 1.25;
+  }
+
+  .job h3 span {
     font-weight: 400;
     color: var(--muted);
   }
 
-  .skills {
-    margin: 0;
-    display: grid;
-    gap: 14px;
-  }
-
-  .skills dt {
-    font-weight: 600;
-  }
-
-  .skills dd {
-    margin: 0;
+  .job p {
     color: var(--muted);
+    font-size: 15.5px;
+    margin-top: 3px;
   }
 
-  .spaced {
-    margin-top: 2.5rem;
+  .degree {
+    font-size: 15.5px;
   }
 
-  .plain {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 16px;
+  .mail {
+    font-family: var(--font-mono);
+    font-size: 17px;
+    user-select: all;
+    overflow-wrap: anywhere;
   }
 
-  .plain p {
-    margin: 0.2rem 0 0;
-  }
+  @media (max-width: 860px) {
+    .sec {
+      padding-block: 120px 100px;
+      align-items: flex-start;
+    }
 
-  .note {
-    font-size: 0.92rem;
+    /* On phones the swarm forms its shape at the top and the text scrolls up under it */
+    .sec:not(.hero) {
+      padding-top: 46vh;
+    }
+
+    .hero {
+      align-items: flex-start;
+      padding-top: 38svh;
+      padding-bottom: 96px;
+    }
+
+    .hint {
+      display: none;
+    }
+
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 22px;
+    }
+
+    .job {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2px;
+    }
   }
 </style>

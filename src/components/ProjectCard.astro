@@ -6,68 +6,91 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { title, summary, stack, date, award } = project.data;
+const { title, summary, stack, date, award, links } = project.data;
 ---
 
-<article class="card">
-  <p class="date">{date}</p>
+<article class="card panel">
+  <p class="mono muted">{date}</p>
   <h3><a href={`/projects/${project.id}/`}>{title}</a></h3>
   {award && <p class="award">{award}</p>}
   <p class="summary">{summary}</p>
-  <ul class="tags">
-    {stack.map((s) => <li>{s}</li>)}
-  </ul>
+  <p class="stack">{stack.join(' · ')}</p>
+  {
+    links.length > 0 && (
+      <p class="links">
+        {links.map((l) => (
+          <a href={l.href}>{l.label} →</a>
+        ))}
+      </p>
+    )
+  }
 </article>
 
 <style>
   .card {
     position: relative;
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: 10px;
-    padding: 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    transition: border-color 0.15s;
+    padding: 22px 22px 20px;
+    transition:
+      border-color 0.3s,
+      transform 0.35s cubic-bezier(0.3, 1.4, 0.5, 1);
   }
 
   .card:hover {
-    border-color: var(--accent);
+    border-color: rgba(255, 181, 71, 0.45);
+    transform: translateX(6px);
   }
 
-  .card h3 a {
-    color: var(--text);
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 750;
+    font-stretch: 112%;
+    font-size: 26px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  h3 a {
     text-decoration: none;
   }
 
-  /* Whole card is clickable */
-  .card h3 a::after {
+  /* The whole card opens the project page */
+  h3 a::after {
     content: '';
     position: absolute;
     inset: 0;
     border-radius: var(--radius);
   }
 
-  .date {
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    color: var(--muted);
-  }
-
   .summary {
-    margin: 0;
     color: var(--muted);
-    font-size: 0.95rem;
+    font-size: 16px;
   }
 
-  .award {
-    align-self: flex-start;
-    margin: 0;
+  .stack {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
   }
 
-  .tags {
-    margin-top: auto;
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  /* Outside links sit above the card-wide link */
+  .links a {
+    position: relative;
+    z-index: 1;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .links a:hover {
+    text-decoration: underline;
   }
 </style>

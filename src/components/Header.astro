@@ -1,67 +1,103 @@
 ---
-import { site } from '../site';
 import { hasResume } from '../resume';
+
+const links = [
+  { id: 'work', label: 'Work' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'contact', label: 'Contact' },
+];
 ---
 
-<header class="site-header">
-  <div class="container inner">
-    <a class="name" href="/">{site.name}</a>
-    <nav aria-label="Main">
-      <a href="/#projects">Projects</a>
-      <a href="/#experience">Experience</a>
-      <a href="/#contact">Contact</a>
-      {hasResume && <a href="/resume.pdf">Resume</a>}
-    </nav>
-  </div>
+<header class="top">
+  <a class="mark" href="/#home"><i></i>EUSUF.DEV</a>
+  <nav aria-label="Main">
+    {
+      links.map((l) => (
+        <a href={`/#${l.id}`} data-nav={l.id}>
+          {l.label}
+        </a>
+      ))
+    }
+    {hasResume && <a href="/resume.pdf">Resume</a>}
+  </nav>
 </header>
 
 <style>
-  .site-header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--border);
+  .top {
+    position: fixed;
+    z-index: 6;
+    inset: 0 0 auto;
+    padding: calc(env(safe-area-inset-top, 0px) + 18px) max(var(--gutter), env(safe-area-inset-right, 0px)) 28px
+      max(var(--gutter), env(safe-area-inset-left, 0px));
+    background: linear-gradient(var(--void) 35%, rgba(5, 6, 9, 0));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    pointer-events: none;
   }
 
-  .inner {
+  .top > * {
+    pointer-events: auto;
+  }
+
+  .mark {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-stretch: 125%;
+    font-size: 16px;
+    text-decoration: none;
+    letter-spacing: 0.01em;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    height: 56px;
+    gap: 10px;
+    white-space: nowrap;
   }
 
-  .name {
-    font-weight: 700;
-    color: var(--text);
-    text-decoration: none;
-    white-space: nowrap;
+  .mark i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 14px var(--accent);
   }
 
   nav {
     display: flex;
-    gap: 18px;
-    font-size: 0.92rem;
+    gap: 2px;
   }
 
   nav a {
-    color: var(--muted);
     text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    color: var(--muted);
+    transition:
+      color 0.2s,
+      background 0.2s;
   }
 
-  nav a:hover {
+  nav a:hover,
+  nav a:global(.on) {
     color: var(--text);
+    background: rgba(255, 255, 255, 0.07);
   }
 
-  @media (max-width: 520px) {
-    .name {
-      display: none;
+  @media (max-width: 860px) {
+    .top {
+      padding-bottom: 20px;
     }
 
-    .inner {
-      justify-content: center;
+    .mark {
+      font-size: 14px;
+      gap: 8px;
+    }
+
+    nav a {
+      padding: 6px 8px;
+      font-size: 13.5px;
     }
   }
 </style>

@@ -1,6 +1,6 @@
 # Personal Site
 
-Deen Al Eusuf's personal site at [eusuf.dev](https://eusuf.dev), built with [Astro](https://astro.build). It's a static site with no client-side JavaScript, light and dark themes that follow the visitor's system setting, and a page per project.
+Deen Al Eusuf's personal site at [eusuf.dev](https://eusuf.dev), built with [Astro](https://astro.build). It's a static site on a black background, with a canvas swarm that reshapes itself as you scroll, smooth scrolling from Lenis, and a page per project. With reduced motion on, the swarm holds still.
 
 ## Run it
 
@@ -39,3 +39,5 @@ The domain is registered at Cloudflare, so the site is hosted there too, as a Wo
 4. In the Worker, open **Settings → Domains & Routes → Add → Custom domain**, and add `eusuf.dev`, then `www.eusuf.dev`. Cloudflare creates the DNS records itself because the domain is in the same account.
 
 After that, every push to `main` goes live.
+
+Pull requests get a preview too: Workers Builds runs `npm run build` and then `npx wrangler preview`, and posts the preview link on the PR. The `previews` block in `wrangler.jsonc` is what lets `wrangler preview` run, so keep it even though it is empty. Previews have their own build settings: in **Settings → Builds**, the **Previews Base** tab needs **Build command** `npm run build` as well. Each branch also gets its own preview, listed under the **Production** switcher at the top of the Worker, and it copies the Base settings when it is first made. If a preview fails with "assets.directory does not exist", the Build command is empty in the Base settings or in that branch's own settings.
