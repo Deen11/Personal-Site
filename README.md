@@ -39,3 +39,5 @@ The domain is registered at Cloudflare, so the site is hosted there too, as a Wo
 4. In the Worker, open **Settings → Domains & Routes → Add → Custom domain**, and add `eusuf.dev`, then `www.eusuf.dev`. Cloudflare creates the DNS records itself because the domain is in the same account.
 
 After that, every push to `main` goes live.
+
+Pull requests get a preview too: Workers Builds runs `npm run build` and then `npx wrangler preview`, and posts the preview link on the PR. The `previews` block in `wrangler.jsonc` is what lets `wrangler preview` run, so keep it even though it is empty. If a preview fails with "assets.directory does not exist", the **Build command** in **Settings → Build** is empty.
