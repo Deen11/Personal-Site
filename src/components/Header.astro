@@ -9,7 +9,7 @@ const links = [
 ---
 
 <header class="top">
-  <a class="mark" href="/#home"><i></i>EUSUF.DEV</a>
+  <a class="mark" href="/#home"><i></i>eusuf.dev</a>
   <nav aria-label="Main">
     {
       links.map((l) => (
@@ -27,7 +27,7 @@ const links = [
     position: fixed;
     z-index: 6;
     inset: 0 0 auto;
-    padding: calc(env(safe-area-inset-top, 0px) + 18px) max(var(--gutter), env(safe-area-inset-right, 0px)) 28px
+    padding: calc(env(safe-area-inset-top, 0px) + 20px) max(var(--gutter), env(safe-area-inset-right, 0px)) 32px
       max(var(--gutter), env(safe-area-inset-left, 0px));
     background: linear-gradient(var(--void) 35%, rgba(5, 6, 9, 0));
     display: flex;
@@ -42,41 +42,38 @@ const links = [
   }
 
   .mark {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-stretch: 125%;
+    font-family: var(--font-mono);
+    font-weight: 500;
     font-size: 16px;
     text-decoration: none;
-    letter-spacing: 0.01em;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     white-space: nowrap;
   }
 
   .mark i {
-    width: 9px;
-    height: 9px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: var(--accent);
-    box-shadow: 0 0 14px var(--accent);
   }
 
   nav {
     display: flex;
-    gap: 2px;
+    gap: 4px;
   }
 
   nav a {
     text-decoration: none;
     font-weight: 500;
     font-size: 15px;
-    padding: 8px 14px;
-    border-radius: 999px;
+    padding: 8px 12px;
+    border-radius: 8px;
     color: var(--muted);
     transition:
-      color 0.2s,
-      background 0.2s;
+      color 150ms var(--ease),
+      background-color 150ms var(--ease);
   }
 
   nav a:hover,
@@ -92,12 +89,11 @@ const links = [
 
     .mark {
       font-size: 14px;
-      gap: 8px;
     }
 
     nav a {
-      padding: 6px 8px;
-      font-size: 13.5px;
+      padding: 4px 8px;
+      font-size: 14px;
     }
   }
 </style>

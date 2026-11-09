@@ -1,0 +1,187 @@
+---
+interface Props {
+  // The project entry's id, e.g. "pailot". Projects without a matching artifact render nothing.
+  id: string;
+}
+
+const { id } = Astro.props;
+
+// Frame-time strip for the-final-act: bar heights in px, one spike over the 16.6ms budget line
+const frames = [20, 23, 18, 24, 21, 19, 23, 20, 24, 18, 22, 20, 23, 19, 24, 21, 42, 20, 23, 18, 22, 20, 24, 19, 21, 23, 18, 22, 20];
+---
+
+{
+  id === 'budget-review' && (
+    <div class="art" aria-hidden="true">
+      <svg viewBox="0 0 400 100">
+        <text class="dim head" x="8" y="13">LINE ITEM</text>
+        <text class="dim head" x="310" y="13" text-anchor="end">CLAIMED</text>
+        <text class="dim head" x="336" y="13">CHECK</text>
+        <path class="ln" d="M8 21 H392" />
+        <text class="mut" x="8" y="36">GPU cluster</text>
+        <text class="mut" x="310" y="36" text-anchor="end">48,200.00</text>
+        <path class="ok" d="M348 34 l3 3 l6 -7" />
+        <path class="sep" d="M8 45 H392" />
+        <rect class="hot" x="0" y="47" width="2" height="12" />
+        <text class="mut" x="8" y="54">Licences</text>
+        <text class="mut" x="310" y="54" text-anchor="end">12,750.00</text>
+        <path class="flagline" d="M262 59 H310" />
+        <text class="hot" x="352" y="54">!</text>
+        <path class="sep" d="M8 63 H392" />
+        <text class="mut" x="8" y="72">Cold storage</text>
+        <text class="mut" x="310" y="72" text-anchor="end">9,340.00</text>
+        <path class="ok" d="M348 70 l3 3 l6 -7" />
+        <path class="sep" d="M8 81 H392" />
+        <text class="mut" x="8" y="90">Support plan</text>
+        <text class="mut" x="310" y="90" text-anchor="end">6,120.00</text>
+        <path class="ok" d="M348 88 l3 3 l6 -7" />
+      </svg>
+    </div>
+  )
+}
+
+{
+  id === 'pailot' && (
+    <div class="art" aria-hidden="true">
+      <svg viewBox="0 0 400 92">
+        <text class="dim" x="4" y="22">T1</text>
+        <text class="dim" x="4" y="52">T2</text>
+        <text class="dim" x="4" y="82">T3</text>
+        <path class="sep" d="M26 33 H392 M26 63 H392" />
+        <rect class="box" x="44" y="10" width="80" height="16" rx="4" />
+        <rect class="box" x="170" y="10" width="60" height="16" rx="4" />
+        <rect class="box" x="290" y="10" width="80" height="16" rx="4" />
+        <rect class="box" x="60" y="40" width="80" height="16" rx="4" />
+        <rect class="ghost" x="210" y="40" width="60" height="16" rx="4" />
+        <rect class="box" x="100" y="70" width="64" height="16" rx="4" />
+        <rect class="hotbox" x="222" y="70" width="60" height="16" rx="4" />
+        <path class="arc" d="M240 57 Q 250 62 251 69" />
+        <text class="hot" x="290" y="82">reassigned</text>
+      </svg>
+    </div>
+  )
+}
+
+{
+  id === 'support-desk' && (
+    <div class="art" aria-hidden="true">
+      <svg viewBox="0 0 400 92">
+        <path class="ln" d="M66 43 H92 M162 43 H180 V23 H196 M180 43 V67 H196 M268 67 H296" />
+        <rect class="box" x="8" y="32" width="58" height="22" rx="5" />
+        <text class="mut" x="37" y="47" text-anchor="middle">query</text>
+        <rect class="box" x="92" y="32" width="70" height="22" rx="5" />
+        <text class="mut" x="127" y="47" text-anchor="middle">classify</text>
+        <rect class="box" x="196" y="12" width="72" height="22" rx="5" />
+        <text class="mut" x="232" y="27" text-anchor="middle">answered</text>
+        <path class="ok" d="M276 21 l3 3 l6 -7" />
+        <rect class="hotbox" x="196" y="56" width="72" height="22" rx="5" />
+        <text class="hot" x="232" y="71" text-anchor="middle">ticket</text>
+        <rect class="box" x="296" y="56" width="56" height="22" rx="5" />
+        <text class="mut" x="324" y="71" text-anchor="middle">human</text>
+        <text class="dim" x="360" y="71">escalated</text>
+      </svg>
+    </div>
+  )
+}
+
+{
+  id === 'the-final-act' && (
+    <div class="art" aria-hidden="true">
+      <svg viewBox="0 0 400 92">
+        <text class="dim head" x="4" y="14">frame times</text>
+        <text class="dim head" x="388" y="50" text-anchor="end">16.6ms</text>
+        <path class="ln" d="M4 56 H392" stroke-dasharray="4 4" />
+        {frames.map((h, i) => <rect class={i === 16 ? 'hot' : 'bar'} x={4 + i * 13} y={84 - h} width="8" height={h} />)}
+        <path class="sep" d="M4 84 H392" />
+      </svg>
+    </div>
+  )
+}
+
+<style>
+  .art {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+
+  .art svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .art text {
+    font-family: var(--font-mono);
+    font-size: 10px;
+  }
+
+  .art .head {
+    font-size: 9px;
+  }
+
+  .art text.dim {
+    fill: var(--faint);
+  }
+
+  .art text.mut {
+    fill: var(--muted);
+  }
+
+  .art text.hot {
+    fill: var(--accent);
+  }
+
+  .art .ln,
+  .art .sep {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.14);
+  }
+
+  .art .sep {
+    stroke: rgba(255, 255, 255, 0.08);
+  }
+
+  .art .ok {
+    fill: none;
+    stroke: var(--muted);
+    stroke-width: 1.4;
+  }
+
+  .art .arc {
+    fill: none;
+    stroke: var(--faint);
+    stroke-dasharray: 3 3;
+  }
+
+  .art .flagline {
+    fill: none;
+    stroke: var(--accent);
+    stroke-dasharray: 2 2;
+  }
+
+  .art .box {
+    fill: rgba(255, 255, 255, 0.045);
+    stroke: rgba(255, 255, 255, 0.16);
+  }
+
+  .art .hotbox {
+    fill: rgba(255, 181, 71, 0.14);
+    stroke: var(--accent);
+  }
+
+  .art .ghost {
+    fill: none;
+    stroke: var(--faint);
+    stroke-dasharray: 3 3;
+  }
+
+  .art .bar {
+    fill: var(--faint);
+    opacity: 0.5;
+  }
+
+  .art rect.hot {
+    fill: var(--accent);
+  }
+</style>

@@ -9,17 +9,34 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
 const featured = projects.filter((p) => p.data.featured);
 const more = projects.filter((p) => !p.data.featured);
 const degree = education[0];
+// The experience ledger is keyed by start year; a year prints once, on the first role that starts in it
+const yearOf = (dates: string) => dates.match(/\d{4}/)?.[0] ?? '';
+const jobs = experience.map((job, i) => ({
+  ...job,
+  year: i === 0 || yearOf(experience[i - 1].dates) !== yearOf(job.dates) ? yearOf(job.dates) : '',
+  current: job.dates.endsWith('Present'),
+}));
 const tags = ['LangGraph', 'LLM tool calling', 'Agent evals', 'Amazon Bedrock', 'FastAPI', 'React', 'TypeScript', 'Python', 'C++20', 'ECS', 'Lambda', 'Terraform'];
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  url: Astro.site,
+  jobTitle: 'Software and AI Engineer',
+  address: { '@type': 'PostalAddress', addressLocality: site.location, addressCountry: 'SG' },
+  sameAs: [site.linkedin, site.github],
+};
 ---
 
 <Base hud>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(person)} />
   <!-- Each section names the shape the swarm forms while it is on screen -->
-  <section class="sec hero" id="home" data-form="DEEN">
+  <section class="sec hero" id="home" data-form="EUSUF">
     <div class="container">
       <div class="hero-grid">
         <div class="hero-title">
           <p class="mono muted">{site.name} · Software engineer · {site.location}</p>
-          <h1>I build AI agents <span>and the systems around them.</span></h1>
+          <h1>I build AI agents <span>and the systems around them</span></h1>
         </div>
         <div class="hero-side">
           <p class="lede">
@@ -32,15 +49,15 @@ const tags = ['LangGraph', 'LLM tool calling', 'Agent evals', 'Amazon Bedrock', 
           </div>
         </div>
       </div>
-      <div class="hint mono"><span>Scroll to re-form the swarm <span class="arrow">↓</span></span><span>Move through it · click to scatter</span></div>
+      <div class="hint mono"><span>Scroll to re-form the swarm ↓</span><span>Move through it · click to scatter</span></div>
     </div>
   </section>
 
   <section class="sec" id="about" data-form="flock">
     <div class="container">
       <div class="text">
-        <p class="kicker mono">About <span class="f">swarm → free flock</span></p>
-        <h2 class="display">Lots of small parts. <em>One system</em> that behaves.</h2>
+        <p class="kicker mono">About</p>
+        <h2 class="display">Lots of small parts, <span>one system that behaves</span></h2>
         <p class="lede">
           Every agent on this page follows three local rules, and together they move as one flock. That's the kind of
           problem I like. At GovTech I own an AI review platform end to end, from the React front end to the Bedrock
@@ -54,8 +71,8 @@ const tags = ['LangGraph', 'LLM tool calling', 'Agent evals', 'Amazon Bedrock', 
   <section class="sec" id="work" data-form="</>">
     <div class="container">
       <div class="text wide">
-        <p class="kicker mono">Selected work <span class="f">swarm → &lt;/&gt;</span></p>
-        <h2 class="display">Things I've <em>built</em></h2>
+        <p class="kicker mono">Selected work</p>
+        <h2 class="display">Things I've built</h2>
         <div class="cards">
           {featured.map((project) => <ProjectCard project={project} />)}
         </div>
@@ -79,42 +96,48 @@ const tags = ['LangGraph', 'LLM tool calling', 'Agent evals', 'Amazon Bedrock', 
   <section class="sec" id="experience" data-form="2027">
     <div class="container">
       <div class="text wide">
-        <p class="kicker mono">Experience <span class="f">swarm → 2027</span></p>
-        <h2 class="display">Open to roles from <em>2027</em></h2>
+        <p class="kicker mono">Experience</p>
+        <h2 class="display">Open to roles <span>from 2027</span></h2>
         <ol class="jobs">
           {
-            experience.map((job) => (
-              <li class="job">
-                <span class="mono">{job.dates}</span>
+            jobs.map((job) => (
+              <li class:list={['job', { lead: job.current }]}>
+                <span class="year mono" aria-hidden="true">{job.year}</span>
                 <div>
                   <h3>
                     {job.role} <span>· {job.org}</span>
                   </h3>
-                  <p>{job.summary}</p>
+                  <p class="meta mono">{job.dates}</p>
+                  <p class="summary">{job.summary}</p>
                 </div>
               </li>
             ))
           }
         </ol>
-        <p class="muted degree">{degree.degree} · {degree.school} · {degree.dates}</p>
+        <p class="degree">
+          <b>{degree.degree}</b>
+          <span class="meta mono">{degree.school} · {degree.dates}</span>
+        </p>
       </div>
     </div>
   </section>
 
-  <section class="sec" id="contact" data-form="HI!">
+  <section class="sec" id="contact" data-form="HI">
     <div class="container">
       <div class="text">
-        <p class="kicker mono">Contact <span class="f">swarm → HI!</span></p>
-        <h2 class="display">Let's build something that <em>behaves</em>.</h2>
+        <p class="kicker mono">Contact</p>
+        <h2 class="display">Let's build something <span>that behaves</span></h2>
         <p class="lede">I'm looking for software and AI engineer roles starting in 2027. Email is the fastest way to reach me.</p>
         <p class="mail">{site.email}</p>
         <div class="actions">
           <a class="button primary" href={`mailto:${site.email}`}>Email me</a>
           <button class="button" type="button" id="copy">Copy email</button>
-          <a class="button" href={site.linkedin}>LinkedIn</a>
-          <a class="button" href={site.github}>GitHub</a>
-          {hasResume && <a class="button" href="/resume.pdf">Resume (PDF)</a>}
         </div>
+        <p class="elsewhere">
+          <a href={site.linkedin}>LinkedIn</a>
+          <a href={site.github}>GitHub</a>
+          {hasResume && <a href="/resume.pdf">Resume (PDF)</a>}
+        </p>
       </div>
     </div>
   </section>
@@ -143,7 +166,7 @@ const tags = ['LangGraph', 'LLM tool calling', 'Agent evals', 'Amazon Bedrock', 
     min-height: 100svh;
     display: flex;
     align-items: center;
-    padding-block: 140px;
+    padding-block: 144px;
   }
 
   .sec > .container {
@@ -167,22 +190,16 @@ const tags = ['LangGraph', 'LLM tool calling', 'Agent evals', 'Amazon Bedrock', 
     color: var(--muted);
   }
 
-  .kicker .f {
-    color: var(--accent);
-    border: 1px solid rgba(255, 181, 71, 0.35);
-    padding: 3px 8px;
-    border-radius: 6px;
-  }
-
   .lede {
     color: var(--muted);
-    font-size: 19px;
+    font-size: 20px;
+    line-height: 1.5;
     max-width: 34em;
   }
 
   .lede b {
     color: var(--text);
-    font-weight: 600;
+    font-weight: 500;
   }
 
   /* Hero: the swarm spells the name, the copy sits under it */
@@ -198,24 +215,27 @@ const tags = ['LangGraph', 'LLM tool calling', 'Agent evals', 'Amazon Bedrock', 
     align-items: end;
   }
 
-  .hero-title,
+  .hero-title {
+    display: grid;
+    gap: 16px;
+  }
+
   .hero-side {
     display: grid;
-    gap: 18px;
+    gap: 24px;
   }
 
   h1 {
     font-family: var(--font-display);
-    font-weight: 800;
+    font-weight: 500;
     font-stretch: 112%;
-    font-size: clamp(32px, 3.6vw, 54px);
-    line-height: 1.02;
+    font-size: clamp(36px, 4vw, 60px);
+    line-height: 1.04;
     letter-spacing: -0.02em;
   }
 
   h1 span {
     color: var(--muted);
-    font-weight: 500;
   }
 
   .hint {
@@ -223,21 +243,10 @@ const tags = ['LangGraph', 'LLM tool calling', 'Agent evals', 'Amazon Bedrock', 
     justify-content: space-between;
     gap: 16px;
     flex-wrap: wrap;
-    margin-top: 54px;
-    padding-top: 18px;
+    margin-top: 56px;
+    padding-top: 16px;
     border-top: 1px solid var(--border);
     color: var(--muted);
-  }
-
-  .arrow {
-    display: inline-block;
-    animation: nudge 1.8s ease-in-out infinite;
-  }
-
-  @keyframes nudge {
-    50% {
-      transform: translateY(4px);
-    }
   }
 
   .cards {
@@ -246,37 +255,38 @@ const tags = ['LangGraph', 'LLM tool calling', 'Agent evals', 'Amazon Bedrock', 
   }
 
   .more {
-    font-size: 15.5px;
+    font-size: 16px;
   }
 
   .jobs {
     list-style: none;
     margin: 0;
     padding: 0;
+  }
+
+  /* A year index runs down the left; past roles sit small under the current one */
+  .job,
+  .degree {
     display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    column-gap: 16px;
+    padding-top: 12px;
     border-top: 1px solid var(--border);
   }
 
   .job {
-    display: grid;
-    grid-template-columns: 150px minmax(0, 1fr);
-    gap: 18px;
-    padding-block: 16px;
-    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
   }
 
-  .job .mono {
+  .job .year {
     padding-top: 4px;
-    color: var(--muted);
-    letter-spacing: 0.02em;
+    color: var(--faint);
   }
 
   .job h3 {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-stretch: 105%;
-    font-size: 19px;
-    line-height: 1.25;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.4;
   }
 
   .job h3 span {
@@ -284,26 +294,104 @@ const tags = ['LangGraph', 'LLM tool calling', 'Agent evals', 'Amazon Bedrock', 
     color: var(--muted);
   }
 
-  .job p {
-    color: var(--muted);
-    font-size: 15.5px;
-    margin-top: 3px;
+  .meta {
+    display: block;
+    font-size: 12px;
+    color: var(--faint);
   }
 
-  .degree {
-    font-size: 15.5px;
+  .job .meta {
+    margin-top: 4px;
+  }
+
+  .job .summary {
+    margin-top: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  /* The current role leads: display heading, full-size summary, and the section's one amber mark on its year */
+  .job.lead {
+    padding-top: 0;
+    padding-bottom: 24px;
+    border-top: 0;
+  }
+
+  .job.lead .year {
+    display: flex;
+    align-items: center;
+    align-self: start;
+    gap: 8px;
+    padding-top: 6px;
+    color: var(--muted);
+  }
+
+  .job.lead .year::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .job.lead h3 {
+    font-family: var(--font-display);
+    font-stretch: 112%;
+    font-size: 24px;
+    line-height: 1.15;
+  }
+
+  .job.lead .meta {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .job.lead .summary {
+    margin-top: 8px;
+    font-size: 17px;
+  }
+
+  /* The degree closes the ledger as a footnote aligned to the same rail */
+  .degree b {
+    grid-column: 2;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  .degree .meta {
+    grid-column: 2;
+    margin-top: 4px;
   }
 
   .mail {
     font-family: var(--font-mono);
-    font-size: 17px;
+    font-size: 18px;
     user-select: all;
     overflow-wrap: anywhere;
   }
 
+  .elsewhere {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    font-size: 16px;
+  }
+
+  .elsewhere a {
+    color: var(--muted);
+    transition: color 150ms var(--ease);
+  }
+
+  .elsewhere a:hover {
+    color: var(--text);
+  }
+
   @media (max-width: 860px) {
     .sec {
-      padding-block: 120px 100px;
+      padding-block: 120px 96px;
       align-items: flex-start;
     }
 
@@ -324,12 +412,17 @@ const tags = ['LangGraph', 'LLM tool calling', 'Agent evals', 'Amazon Bedrock', 
 
     .hero-grid {
       grid-template-columns: minmax(0, 1fr);
-      gap: 22px;
+      gap: 24px;
     }
 
-    .job {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 2px;
+    .job,
+    .degree {
+      grid-template-columns: 48px minmax(0, 1fr);
+      column-gap: 12px;
+    }
+
+    .job.lead h3 {
+      font-size: 22px;
     }
   }
 </style>

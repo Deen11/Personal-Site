@@ -1,18 +1,20 @@
 :root {
   --void: #050609;
-  --panel: rgba(15, 16, 22, 0.74);
+  --panel: rgba(13, 15, 21, 0.86);
   --text: #f2f0ea;
-  --muted: #a3a2ad;
+  --muted: #a3a9b8;
+  --faint: #7a8296;
   --border: rgba(255, 255, 255, 0.1);
   --accent: #ffb547;
   --on-accent: #1a1205;
 
   --font-display: 'Archivo', 'Arial Black', system-ui, sans-serif;
-  --font-sans: 'Hanken Grotesk', 'Helvetica Neue', system-ui, sans-serif;
+  --font-sans: 'Archivo', 'Helvetica Neue', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --width: 1320px;
   --gutter: 28px;
   --radius: 16px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   color-scheme: dark;
 }
@@ -70,16 +72,12 @@ p {
 
 .mono {
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 13px;
 }
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 13px;
   color: var(--muted);
 }
 
@@ -89,31 +87,31 @@ p {
 
 .display {
   font-family: var(--font-display);
-  font-weight: 800;
+  font-weight: 500;
   font-size: clamp(36px, 4.6vw, 64px);
-  line-height: 0.98;
+  line-height: 1.04;
   letter-spacing: -0.02em;
   font-stretch: var(--wd, 118%);
 }
 
-.display em {
-  font-style: normal;
-  color: var(--accent);
+/* The second clause of a heading steps back to the secondary text color */
+.display span {
+  color: var(--muted);
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
 .tags li {
-  font-size: 14.5px;
-  padding: 5px 12px;
-  border-radius: 999px;
+  font-size: 14px;
+  padding: 4px 10px;
+  border-radius: 6px;
   border: 1px solid var(--border);
   color: var(--muted);
   background: rgba(5, 6, 9, 0.5);
@@ -121,14 +119,13 @@ p {
 
 .award {
   font-size: 14px;
-  font-weight: 600;
-  color: var(--accent);
+  font-weight: 500;
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
 }
 
 .button {
@@ -136,29 +133,38 @@ p {
   align-items: center;
   gap: 8px;
   min-height: 48px;
-  padding: 0 22px;
-  border-radius: 999px;
+  padding: 0 20px;
+  border-radius: 10px;
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.04);
   color: var(--text);
-  font: 600 16px var(--font-sans);
+  font: 500 16px var(--font-sans);
   text-decoration: none;
   cursor: pointer;
   transition:
-    transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1),
-    border-color 0.2s;
+    background-color 150ms var(--ease),
+    border-color 150ms var(--ease),
+    transform 150ms var(--ease);
 }
 
 .button:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.button:active {
+  transform: scale(0.98);
 }
 
 .button.primary {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--on-accent);
-  box-shadow: 0 0 30px -6px rgba(255, 181, 71, 0.6);
+}
+
+.button.primary:hover {
+  background: #ffc46e;
+  border-color: #ffc46e;
 }
 
 @media (max-width: 860px) {
@@ -184,8 +190,8 @@ main {
 /* Glass panel that keeps text readable over the swarm */
 .panel {
   background: var(--panel);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }

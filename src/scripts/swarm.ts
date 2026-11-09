@@ -10,6 +10,8 @@ type Scrub = { i: number; t: number };
 const BG = '#050609';
 const CELL = 34;
 const BINS = 6;
+// Radius of the pointer's repulsion field, also the drawn ring
+const FIELD = 40;
 
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const smooth = (t: number) => t * t * (3 - 2 * t);
@@ -39,13 +41,15 @@ export function startSwarm(canvas: HTMLCanvasElement) {
   let heights: number[] = [];
   const mouse = { x: -9999, y: -9999 };
   let kick = 0;
+  let pulse = 0;
+  let ringA = 0;
   let lastY = scrollY;
   let time = 0;
 
   const regionFor = (word: string): Box => {
     if (ambient) return { x: 0, y: 0, w: W, h: H };
-    if (mobile) return word === 'DEEN' ? { x: W * 0.05, y: H * 0.11, w: W * 0.9, h: H * 0.22 } : { x: W * 0.06, y: H * 0.1, w: W * 0.88, h: H * 0.3 };
-    if (word === 'DEEN') return { x: W * 0.04, y: H * 0.1, w: W * 0.92, h: H * 0.46 };
+    if (mobile) return word === 'EUSUF' ? { x: W * 0.05, y: H * 0.11, w: W * 0.9, h: H * 0.22 } : { x: W * 0.06, y: H * 0.1, w: W * 0.88, h: H * 0.3 };
+    if (word === 'EUSUF') return { x: W * 0.04, y: H * 0.1, w: W * 0.92, h: H * 0.46 };
     return { x: W * 0.5, y: H * 0.14, w: W * 0.46, h: H * 0.72 };
   };
 
@@ -240,8 +244,8 @@ export function startSwarm(canvas: HTMLCanvasElement) {
       const mx = b.x - mouse.x;
       const my = b.y - mouse.y;
       const md = mx * mx + my * my;
-      if (md < 16000) {
-        const f = ((1 - md / 16000) * 3) / Math.sqrt(md + 1);
+      if (md < FIELD * FIELD) {
+        const f = ((1 - md / (FIELD * FIELD)) * 3) / Math.sqrt(md + 1);
         ax += mx * f;
         ay += my * f;
       }
@@ -300,6 +304,20 @@ export function startSwarm(canvas: HTMLCanvasElement) {
         ctx.stroke();
       }
     }
+    // The pointer sits inside the agents' repulsion field, so a faint ring makes it felt
+    if (!reduce && ringA > 0.01) {
+      ctx.globalAlpha = alpha * ringA * (0.12 + pulse * 0.32);
+      ctx.strokeStyle = '#ffb547';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(mouse.x, mouse.y, FIELD * (1 + pulse * 0.6), 0, 6.2832);
+      ctx.stroke();
+      ctx.globalAlpha = alpha * ringA * 0.5;
+      ctx.fillStyle = '#ffb547';
+      ctx.beginPath();
+      ctx.arc(mouse.x, mouse.y, 2, 0, 6.2832);
+      ctx.fill();
+    }
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';
   };
@@ -342,6 +360,8 @@ export function startSwarm(canvas: HTMLCanvasElement) {
     last = now;
     const s = scrub();
     step(s);
+    ringA += ((mouse.x > -999 ? 1 : 0) - ringA) * 0.15;
+    pulse *= 0.9;
     // On phones the swarm fades behind the text once you leave the hero
     const away = clamp(scrollY / (H * 0.6));
     draw(ambient ? 0.35 : mobile ? 1 - away * 0.55 : 1);
@@ -384,6 +404,7 @@ export function startSwarm(canvas: HTMLCanvasElement) {
   // Clicking empty space scatters nearby agents
   addEventListener('pointerdown', (e) => {
     if ((e.target as Element).closest('a, button, input, video')) return;
+    pulse = 1;
     for (const b of boids) {
       const dx = b.x - e.clientX;
       const dy = b.y - e.clientY;
