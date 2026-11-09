@@ -9,6 +9,13 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
 const featured = projects.filter((p) => p.data.featured);
 const more = projects.filter((p) => !p.data.featured);
 const degree = education[0];
+// The experience ledger is keyed by start year; a year prints once, on the first role that starts in it
+const yearOf = (dates: string) => dates.match(/\d{4}/)?.[0] ?? '';
+const jobs = experience.map((job, i) => ({
+  ...job,
+  year: i === 0 || yearOf(experience[i - 1].dates) !== yearOf(job.dates) ? yearOf(job.dates) : '',
+  current: job.dates.endsWith('Present'),
+}));
 const tags = ['LangGraph', 'LLM tool calling', 'Agent evals', 'Amazon Bedrock', 'FastAPI', 'React', 'TypeScript', 'Python', 'C++20', 'ECS', 'Lambda', 'Terraform'];
 const person = {
   '@context': 'https://schema.org',
@@ -93,20 +100,24 @@ const person = {
         <h2 class="display">Open to roles <span>from 2027</span></h2>
         <ol class="jobs">
           {
-            experience.map((job) => (
-              <li class="job">
-                <span class="mono">{job.dates}</span>
+            jobs.map((job) => (
+              <li class:list={['job', { lead: job.current }]}>
+                <span class="year mono" aria-hidden="true">{job.year}</span>
                 <div>
                   <h3>
                     {job.role} <span>· {job.org}</span>
                   </h3>
-                  <p>{job.summary}</p>
+                  <p class="meta mono">{job.dates}</p>
+                  <p class="summary">{job.summary}</p>
                 </div>
               </li>
             ))
           }
         </ol>
-        <p class="muted degree">{degree.degree} · {degree.school} · {degree.dates}</p>
+        <p class="degree">
+          <b>{degree.degree}</b>
+          <span class="meta mono">{degree.school} · {degree.dates}</span>
+        </p>
       </div>
     </div>
   </section>
@@ -251,29 +262,31 @@ const person = {
     list-style: none;
     margin: 0;
     padding: 0;
+  }
+
+  /* A year index runs down the left; past roles sit small under the current one */
+  .job,
+  .degree {
     display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    column-gap: 16px;
+    padding-top: 12px;
     border-top: 1px solid var(--border);
   }
 
   .job {
-    display: grid;
-    grid-template-columns: 168px minmax(0, 1fr);
-    gap: 16px;
-    padding-block: 16px;
-    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
   }
 
-  .job .mono {
+  .job .year {
     padding-top: 4px;
-    color: var(--muted);
+    color: var(--faint);
   }
 
   .job h3 {
-    font-family: var(--font-display);
     font-weight: 500;
-    font-stretch: 105%;
-    font-size: 20px;
-    line-height: 1.25;
+    font-size: 16px;
+    line-height: 1.4;
   }
 
   .job h3 span {
@@ -281,15 +294,76 @@ const person = {
     color: var(--muted);
   }
 
-  .job p {
-    color: var(--muted);
-    font-size: 16px;
+  .meta {
+    display: block;
+    font-size: 12px;
+    color: var(--faint);
+  }
+
+  .job .meta {
     margin-top: 4px;
   }
 
-  /* The one number that matters, echoed by the swarm's formation */
-  .degree {
+  .job .summary {
+    margin-top: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  /* The current role leads: display heading, full-size summary, and the section's one amber mark on its year */
+  .job.lead {
+    padding-top: 0;
+    padding-bottom: 24px;
+    border-top: 0;
+  }
+
+  .job.lead .year {
+    display: flex;
+    align-items: center;
+    align-self: start;
+    gap: 8px;
+    padding-top: 6px;
+    color: var(--muted);
+  }
+
+  .job.lead .year::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .job.lead h3 {
+    font-family: var(--font-display);
+    font-stretch: 112%;
+    font-size: 24px;
+    line-height: 1.15;
+  }
+
+  .job.lead .meta {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .job.lead .summary {
+    margin-top: 8px;
+    font-size: 17px;
+  }
+
+  /* The degree closes the ledger as a footnote aligned to the same rail */
+  .degree b {
+    grid-column: 2;
+    font-weight: 500;
     font-size: 16px;
+    line-height: 1.4;
+  }
+
+  .degree .meta {
+    grid-column: 2;
+    margin-top: 4px;
   }
 
   .mail {
@@ -341,9 +415,14 @@ const person = {
       gap: 24px;
     }
 
-    .job {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 4px;
+    .job,
+    .degree {
+      grid-template-columns: 48px minmax(0, 1fr);
+      column-gap: 12px;
+    }
+
+    .job.lead h3 {
+      font-size: 22px;
     }
   }
 </style>
